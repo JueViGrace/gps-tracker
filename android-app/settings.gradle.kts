@@ -7,3 +7,10 @@
  */
 
 rootProject.name = "gps-tracker"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+pluginManagement {
+
+}
+
+include("composeApp")
