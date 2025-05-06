@@ -1,9 +1,10 @@
-package database
+package data
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
+	"gps-tracker/internal/database"
 	"log"
 	"os"
 	"strconv"
@@ -13,48 +14,51 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// Service represents a service that interacts with a database.
-type Service interface {
-	// Health returns a map of health status information.
-	// The keys and values in the map are service-specific.
+// Storage represents a service that interacts with a database.
+type Storage interface {
 	Health() map[string]string
 
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
 	Close() error
+	TrackingStore() TrackingStore
+	AuthStore() AuthStore
 }
 
-type service struct {
-	db *sql.DB
+type storage struct {
+	db      *sql.DB
+	queries *database.Queries
+	ctx     context.Context
 }
 
 var (
-	dburl      = os.Getenv("BLUEPRINT_DB_URL")
-	dbInstance *service
+	ctx        context.Context = context.Background()
+	dburl      string          = os.Getenv("DB_URL")
+	dbInstance *storage
+	queries    *database.Queries
 )
 
-func New() Service {
-	// Reuse Connection
+func NewStorage() Storage {
 	if dbInstance != nil {
 		return dbInstance
 	}
 
-	db, err := sql.Open("sqlite3", dburl)
+	conn, err := sql.Open("sqlite3", dburl)
 	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
 		log.Fatal(err)
 	}
 
-	dbInstance = &service{
-		db: db,
+	queries = database.New(conn)
+
+	dbInstance = &storage{
+		db:      conn,
+		queries: queries,
+		ctx:     ctx,
 	}
 	return dbInstance
 }
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
-func (s *service) Health() map[string]string {
+func (s *storage) Health() map[string]string {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
@@ -107,7 +111,7 @@ func (s *service) Health() map[string]string {
 // It logs a message indicating the disconnection from the specific database.
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
-func (s *service) Close() error {
+func (s *storage) Close() error {
 	log.Printf("Disconnected from database: %s", dburl)
 	return s.db.Close()
 }

@@ -3,12 +3,17 @@ package api
 import (
 	"context"
 	"fmt"
+	"gps-tracker/internal/data"
+	"gps-tracker/internal/types"
+	"gps-tracker/internal/util"
 	"os"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Api interface {
@@ -18,18 +23,24 @@ type Api interface {
 
 type api struct {
 	*fiber.App
+	db        data.Storage
+	validator *util.XValidator
 }
 
 func New() Api {
 	return &api{
 		App: fiber.New(fiber.Config{
-			ServerHeader: "GPSTrackerServer",
-			AppName:      "GPSTrackerServer",
-			ErrorHandler: func(e *fiber.Ctx, err error) error {
-				// TODO: respond
-				return nil
+			ServerHeader: "gps-tracker-server",
+			AppName:      "gps-tracker-server",
+			ErrorHandler: func(c *fiber.Ctx, err error) error {
+				res := types.RespondInternalServerError(nil, err.Error())
+				return c.Status(res.Status).JSON(res)
 			},
 		}),
+		db: data.NewStorage(),
+		validator: &util.XValidator{
+			Validator: validator.New(),
+		},
 	}
 }
 
@@ -42,12 +53,12 @@ func (a *api) Start() error {
 	a.App.Use(logger.New())
 	a.App.Use(cors.New())
 
-	// TODO: add routes
+	a.RegisterRoutes()
 
 	// this should go after registering app routes
 	a.App.Use(func(c *fiber.Ctx) error {
-		// TODO: respond
-		return nil
+		res := types.RespondNotFound(nil, "Route not found")
+		return c.Status(res.Status).JSON(res)
 	})
 
 	err = a.Listen(fmt.Sprintf(":%d", port))

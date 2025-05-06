@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"gps-tracker/internal/api"
-	"gps-tracker/internal/database"
+	"gps-tracker/internal/data"
 )
 
 type Server interface {
@@ -13,13 +13,13 @@ type Server interface {
 
 type server struct {
 	api api.Api
-	db  database.Service
+	db  data.Storage
 }
 
 func New() Server {
 	server := &server{
 		api: api.New(),
-		db:  database.New(),
+		db:  data.NewStorage(),
 	}
 	return server
 }
