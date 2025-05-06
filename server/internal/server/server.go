@@ -1,26 +1,49 @@
 package server
 
 import (
-	"github.com/gofiber/fiber/v2"
-
+	"context"
+	"gps-tracker/internal/api"
 	"gps-tracker/internal/database"
 )
 
-type FiberServer struct {
-	*fiber.App
-
-	db database.Service
+type Server interface {
+	Init() error
+	ShutDown(ctx context.Context) error
 }
 
-func New() *FiberServer {
-	server := &FiberServer{
-		App: fiber.New(fiber.Config{
-			ServerHeader: "gps-tracker",
-			AppName:      "gps-tracker",
-		}),
+type server struct {
+	api api.Api
+	db  database.Service
+}
 
-		db: database.New(),
+func New() Server {
+	server := &server{
+		api: api.New(),
+		db:  database.New(),
 	}
-
 	return server
+}
+
+func (s *server) Init() error {
+	err := s.api.Start()
+	if err != nil {
+		dbErr := s.db.Close()
+		if dbErr != nil {
+			return err
+		}
+		return err
+	}
+	return nil
+}
+
+func (s *server) ShutDown(ctx context.Context) error {
+	err := s.api.ShutDownWithContext(ctx)
+	if err != nil {
+		return err
+	}
+	err = s.db.Close()
+	if err != nil {
+		return err
+	}
+	return nil
 }
