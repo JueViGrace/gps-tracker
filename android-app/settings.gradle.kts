@@ -1,4 +1,4 @@
-rootProject.name = "gps-tracker"
+rootProject.name = "gps-app"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -28,5 +28,14 @@ dependencyResolutionManagement {
     }
 }
 
+include(":gpsApp")
 
-include(":composeApp")
+include(":core:api")
+include(":core:database")
+include(":core:di")
+include(":core:resources")
+include(":core:types")
+include(":core:ui")
+include(":core:util")
+
+include(":shared")
