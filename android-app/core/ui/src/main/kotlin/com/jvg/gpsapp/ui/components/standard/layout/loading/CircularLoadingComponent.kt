@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.layout.loading
+package com.jvg.gpsapp.ui.components.standard.layout.loading
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator

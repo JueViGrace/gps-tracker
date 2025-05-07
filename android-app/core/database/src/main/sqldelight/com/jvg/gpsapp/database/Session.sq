@@ -1,0 +1,26 @@
+findSession:
+SELECT *
+FROM gps_session
+WHERE active = 1;
+
+insertSession:
+INSERT OR REPLACE INTO gps_session(
+    id,
+    access_token,
+    refresh_token,
+    active
+) VALUES ?;
+
+updateToken:
+UPDATE gps_session SET
+    access_token = :access_token,
+    refresh_token = :refresh_token
+WHERE id = :id;
+
+updateActive:
+UPDATE gps_session SET
+    active = :active
+WHERE id = :id;
+
+deleteSession:
+DELETE FROM gps_session;

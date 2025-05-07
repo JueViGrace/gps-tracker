@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.jvg.gpsapp.resources.R
-import es.red.tcd.ui.components.standard.icons.IconComponent
+import com.jvg.gpsapp.ui.components.standard.icons.IconComponent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

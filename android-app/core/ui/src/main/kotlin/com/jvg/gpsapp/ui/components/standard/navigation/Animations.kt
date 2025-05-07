@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.navigation
+package com.jvg.gpsapp.ui.components.standard.navigation
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope

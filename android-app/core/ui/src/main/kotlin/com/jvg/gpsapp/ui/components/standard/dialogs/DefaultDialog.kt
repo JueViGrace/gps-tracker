@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.dialogs
+package com.jvg.gpsapp.ui.components.standard.dialogs
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -25,9 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import es.red.tcd.resources.R
+import com.jvg.gpsapp.resources.R
 import com.jvg.gpsapp.ui.Fonts
-import es.red.tcd.ui.components.standard.display.TextComponent
+import com.jvg.gpsapp.ui.components.standard.display.TextComponent
 
 @Composable
 fun DefaultDialog(

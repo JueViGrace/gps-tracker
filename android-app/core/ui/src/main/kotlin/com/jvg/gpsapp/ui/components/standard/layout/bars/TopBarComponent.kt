@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.layout.bars
+package com.jvg.gpsapp.ui.components.standard.layout.bars
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar

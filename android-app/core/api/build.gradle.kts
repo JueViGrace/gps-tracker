@@ -25,12 +25,18 @@ dependencies {
     // Resources
     implementation(projects.core.resources)
 
+    // Types
+    implementation(projects.core.types)
+
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+
+    // Kotlin Datetime
+    implementation(libs.kotlinx.datetime)
 
     // Ktor: client
     implementation(libs.ktor.client.core)
@@ -39,4 +45,3 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.serialization.kotlinx.json)
 }
-

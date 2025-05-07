@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.android)
 }
 
@@ -19,11 +20,20 @@ android {
 }
 
 dependencies {
+    // Api
+    implementation(projects.core.api)
+
+    // Database
+    implementation(projects.core.database)
+
     // Resources
     implementation(projects.core.resources)
 
     // Types
     implementation(projects.core.types)
+
+    // Util
+    implementation(projects.core.util)
 
     // Android
     implementation(libs.androidx.core.ktx)
@@ -53,8 +63,4 @@ dependencies {
 
     // Kotlin Datetime
     implementation(libs.kotlinx.datetime)
-
-    // Koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
 }

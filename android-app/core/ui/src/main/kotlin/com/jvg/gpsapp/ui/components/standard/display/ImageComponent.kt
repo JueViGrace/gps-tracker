@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.display
+package com.jvg.gpsapp.ui.components.standard.display
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

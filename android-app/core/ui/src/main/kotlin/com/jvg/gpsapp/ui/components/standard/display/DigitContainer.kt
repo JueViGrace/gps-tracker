@@ -1,4 +1,4 @@
-package es.red.tcd.ui.components.standard.display
+package com.jvg.gpsapp.ui.components.standard.display
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState

@@ -1,9 +1,9 @@
-package es.red.tcd.ui.components.standard.navigation
+package com.jvg.gpsapp.ui.components.standard.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import es.red.tcd.core.shared.ui.navigation.Navigator
+import com.jvg.gpsapp.ui.navigation.Navigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch

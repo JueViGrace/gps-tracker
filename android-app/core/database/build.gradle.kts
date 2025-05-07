@@ -22,6 +22,9 @@ dependencies {
     // Util
     implementation(projects.core.util)
 
+    // Types
+    implementation(projects.core.types)
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

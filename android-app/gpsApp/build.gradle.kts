@@ -42,7 +42,7 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "false")
             val baseUrl: String =
                 gradleLocalProperties(rootProject.rootDir, providers).getProperty("PROD_URL")
-            buildConfigField("string", "BASE_URL", baseUrl)
+            buildConfigField("String", "BASE_URL", baseUrl)
         }
         debug {
             isMinifyEnabled = false
@@ -51,10 +51,10 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
-            buildConfigField("boolean", "IS_DEBUG", "true")
+            buildConfigField("Boolean", "IS_DEBUG", "true")
             val baseUrl: String =
                 gradleLocalProperties(rootProject.rootDir, providers).getProperty("DEV_URL")
-            buildConfigField("string", "BASE_URL", baseUrl)
+            buildConfigField("String", "BASE_URL", baseUrl)
         }
     }
 
@@ -74,6 +74,12 @@ android {
 }
 
 dependencies {
+    // Api
+    implementation(projects.core.api)
+
+    // Database
+    implementation(projects.core.database)
+
     // Di
     implementation(projects.core.di)
 
@@ -82,6 +88,12 @@ dependencies {
 
     // UI
     implementation(projects.core.ui)
+
+    // Util
+    implementation(projects.core.util)
+
+    // Shared
+    implementation(projects.shared)
 
     /* Android / Compose */
     implementation(libs.androidx.core.ktx)

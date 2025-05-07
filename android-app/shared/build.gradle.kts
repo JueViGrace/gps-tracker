@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.android)
 }
 
@@ -34,8 +35,23 @@ dependencies {
     // Types
     implementation(projects.core.types)
 
+    // Ui
+    implementation(projects.core.ui)
+
     // Util
     implementation(projects.core.util)
+
+    /* Android / Compose */
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+
+    // UI
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.material3)
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -43,17 +59,34 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
-    // Kotlin Coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
 
-    // Reflect
+    // Tooling
+    implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.ui.tooling.preview)
+
+    /* Coroutines */
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    /* Dates */
+    implementation(libs.kotlinx.datetime)
+
+    /* Reflection */
     implementation(libs.kotlin.reflect)
 
-    // Konnection
-    implementation(libs.konnection)
-
-    // Koin
+    /* Koin */
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.compose.viewmodel.navigation)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
+
+    /* Network */
+
+    // Connection
+    implementation(libs.konnection)
 }
