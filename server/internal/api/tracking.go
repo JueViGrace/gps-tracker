@@ -11,28 +11,29 @@ import (
 )
 
 type trackingHandler struct {
-	db        data.Storage
+	db        data.TrackingStore
 	validator *util.XValidator
 }
 
-func (a *api) TrackingRoutes(api fiber.Router) {
+func (a *api) trackingRoutes(api fiber.Router) {
 	group := api.Group("/tracking")
-	handler := NewTrackingHandler(a.db, a.validator)
+	handler := NewTrackingHandler(a.db.TrackingStore(), a.validator)
 
-	group.Post("/location", a.authenticatedHandler(handler.RegisterLocation))
-	group.Get("/", a.authenticatedHandler(handler.GetTracking))
+	group.Post("/location", a.authenticatedHandler(handler.registerLocation))
+	group.Get("/", a.authenticatedHandler(handler.getTracking))
 }
 
-func NewTrackingHandler(db data.Storage, validator *util.XValidator) *trackingHandler {
+func NewTrackingHandler(db data.TrackingStore, validator *util.XValidator) *trackingHandler {
 	return &trackingHandler{
+		db:        db,
 		validator: validator,
 	}
 }
 
-func (h *trackingHandler) GetTracking(c *fiber.Ctx, data *types.AuthData) (err error) {
+func (h *trackingHandler) getTracking(c *fiber.Ctx, data *types.AuthData) (err error) {
 	res := new(types.APIResponse)
 
-	trackings, err := h.db.TrackingStore().GetTrackings(data.SessionID)
+	trackings, err := h.db.GetTrackings(data.SessionID)
 	if err != nil {
 		res = types.RespondBadRequest(nil, err.Error())
 		return c.Status(res.Status).JSON(res)
@@ -42,7 +43,7 @@ func (h *trackingHandler) GetTracking(c *fiber.Ctx, data *types.AuthData) (err e
 	return c.Status(res.Status).JSON(res)
 }
 
-func (h *trackingHandler) RegisterLocation(c *fiber.Ctx, data *types.AuthData) (err error) {
+func (h *trackingHandler) registerLocation(c *fiber.Ctx, data *types.AuthData) (err error) {
 	req := new(types.TrackingRequest)
 	res := new(types.APIResponse)
 
@@ -67,7 +68,11 @@ func (h *trackingHandler) RegisterLocation(c *fiber.Ctx, data *types.AuthData) (
 		return c.Status(res.Status).JSON(res)
 	}
 
-	// TODO: register location in the database
+	err = h.db.CreateTracking(data.SessionID, req)
+	if err != nil {
+		res = types.RespondNotFound(nil, err.Error())
+		return c.Status(res.Status).JSON(res)
+	}
 
 	res = types.RespondCreated("Received!", "Success")
 	return c.Status(res.Status).JSON(res)

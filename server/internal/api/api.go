@@ -53,7 +53,7 @@ func (a *api) Start() error {
 	a.App.Use(logger.New())
 	a.App.Use(cors.New())
 
-	a.RegisterRoutes()
+	a.registerRoutes()
 
 	// this should go after registering app routes
 	a.App.Use(func(c *fiber.Ctx) error {

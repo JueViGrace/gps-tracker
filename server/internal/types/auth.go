@@ -13,6 +13,12 @@ type AuthData struct {
 	SessionID uuid.UUID
 }
 
+type AuthResponse struct {
+	ID           uuid.UUID `json:"id"`
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
+}
+
 type Session struct {
 	ID           uuid.UUID
 	AccessToken  string

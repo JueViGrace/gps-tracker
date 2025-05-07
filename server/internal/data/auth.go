@@ -10,6 +10,8 @@ import (
 
 type AuthStore interface {
 	GetSessionById(id uuid.UUID) (session *types.Session, err error)
+	CreateSession() (session *types.AuthResponse, err error)
+	Refresh(sessionId uuid.UUID) (session *types.AuthResponse, err error)
 	DeleteSession(id uuid.UUID) (err error)
 	DeleteSessionByToken(token string) (err error)
 }
@@ -46,6 +48,52 @@ func (s *authStore) GetSessionById(id uuid.UUID) (session *types.Session, err er
 	return
 }
 
+func (s *authStore) CreateSession() (session *types.AuthResponse, err error) {
+	sessionId, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+
+	newTokens, err := createTokens(sessionId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.queries.CreateSession(s.ctx, database.CreateSessionParams{
+		ID:           newTokens.ID.String(),
+		RefreshToken: newTokens.RefreshToken,
+		AccessToken:  newTokens.AccessToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (s *authStore) Refresh(id uuid.UUID) (session *types.AuthResponse, err error) {
+	savedSession, err := s.GetSessionById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	newTokens, err := createTokens(savedSession.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.queries.UpdateSession(s.ctx, database.UpdateSessionParams{
+		ID:           newTokens.ID.String(),
+		RefreshToken: newTokens.RefreshToken,
+		AccessToken:  newTokens.AccessToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
 func (s *authStore) DeleteSession(id uuid.UUID) (err error) {
 	err = s.queries.DeleteSessionById(s.ctx, id.String())
 	if err != nil {
@@ -65,4 +113,23 @@ func (s *authStore) DeleteSessionByToken(token string) (err error) {
 	}
 
 	return
+}
+
+func createTokens(sessionId uuid.UUID) (*types.AuthResponse, error) {
+
+	accessToken, err := types.CreateAccessToken(sessionId)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := types.CreateRefreshToken(sessionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.AuthResponse{
+		ID:           sessionId,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
