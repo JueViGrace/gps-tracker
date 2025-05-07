@@ -21,24 +21,24 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.jvg.gpsapp.R
+import com.jvg.gpsapp.app.presentation.ui.components.navigation.graph.authGraph
+import com.jvg.gpsapp.app.presentation.ui.components.navigation.graph.homeGraph
 import com.jvg.gpsapp.shared.presentation.ui.screens.splash.SplashScreen
 import com.jvg.gpsapp.ui.components.observable.ObserveAsEvents
 import com.jvg.gpsapp.ui.messages.Messages
 import com.jvg.gpsapp.ui.navigation.Destination
 import com.jvg.gpsapp.ui.navigation.NavigationAction
 import com.jvg.gpsapp.ui.navigation.Navigator
-import com.jvg.gpsapp.app.presentation.ui.components.navigation.graph.homeGraph
-import com.jvg.gpsapp.app.presentation.viewmodel.AppViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun App() {
-    val viewModel: AppViewModel = koinViewModel()
     val messages: Messages = koinInject()
     val navigator: Navigator = koinInject()
     val navController: NavHostController = rememberNavController()
@@ -62,9 +62,6 @@ fun App() {
     ) { action ->
         when (action) {
             is NavigationAction.Navigate -> {
-                if (action.destination is Destination.Auth) {
-                    viewModel.invalidSession()
-                }
                 navigator.consumeAction(action)
                 navController.navigate(action.destination, navOptions = action.navOptions)
             }
@@ -112,11 +109,19 @@ fun App() {
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
                         onRender = {
                             scope.launch {
-                                // todo: connect to the server and navigate home
+                                delay(500)
+                                navigator.navigate(
+                                    destination = Destination.Auth,
+                                    navOptions = navOptions {
+                                        launchSingleTop = true
+                                        popUpTo(Destination.Root)
+                                    }
+                                )
                             }
                         }
                     )
                 }
+                authGraph()
                 homeGraph()
             }
         }

@@ -73,7 +73,7 @@ interface NetworkClient {
     suspend fun post(
         baseUrl: String? = null,
         urlString: String,
-        body: Any,
+        body: Any? = null,
         headers: Map<String, String> = emptyMap(),
         contentType: ContentType = ContentType.Application.Json,
     ): NetworkRequestResult {
@@ -90,7 +90,7 @@ interface NetworkClient {
     suspend fun put(
         baseUrl: String? = null,
         urlString: String,
-        body: Any,
+        body: Any? = null,
         headers: Map<String, String> = emptyMap(),
         contentType: ContentType = ContentType.Application.Json,
     ): NetworkRequestResult {
@@ -107,7 +107,7 @@ interface NetworkClient {
     suspend fun patch(
         baseUrl: String? = null,
         urlString: String,
-        body: Any,
+        body: Any? = null,
         headers: Map<String, String> = emptyMap(),
         contentType: ContentType = ContentType.Application.Json,
     ): NetworkRequestResult {
@@ -124,7 +124,7 @@ interface NetworkClient {
     suspend fun delete(
         baseUrl: String? = null,
         urlString: String,
-        body: Any,
+        body: Any? = null,
         headers: Map<String, String> = emptyMap(),
         contentType: ContentType = ContentType.Application.Json,
     ): NetworkRequestResult {
@@ -139,14 +139,16 @@ interface NetworkClient {
     }
 
     companion object {
+        // todo: assign base url
         var BASE_URL: String = ""
         const val TIMEOUT: Long = 120_000
     }
 }
 
 internal fun URLBuilder.setupUrl(urlString: String) {
-    if (urlString.contains("?")) {
-        val path: List<String> = urlString.split("?")
+    val url = "/api/$urlString"
+    if (url.contains("?")) {
+        val path: List<String> = url.split("?")
 
         path(path[0])
         var pair: List<String>
@@ -160,7 +162,7 @@ internal fun URLBuilder.setupUrl(urlString: String) {
             parameters.append(pair[0], pair[1])
         }
     } else {
-        path(urlString)
+        path(url)
     }
 }
 

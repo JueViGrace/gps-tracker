@@ -86,6 +86,9 @@ dependencies {
     // Resources
     implementation(projects.core.resources)
 
+    // Types
+    implementation(projects.core.types)
+
     // UI
     implementation(projects.core.ui)
 

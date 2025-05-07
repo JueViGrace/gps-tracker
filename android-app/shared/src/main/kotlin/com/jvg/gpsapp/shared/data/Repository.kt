@@ -50,7 +50,7 @@ interface StandardRepository : Repository {
         }.flowOn(coroutineContext)
     }
 
-    fun <T> startFlowForNetworkRequest(
+    fun <T> startAuthenticatedFlow(
         block: suspend FlowCollector<RequestState<T>>.(Session) -> Unit
     ): Flow<RequestState<T>> {
         return flow {
@@ -66,7 +66,7 @@ interface StandardRepository : Repository {
                     )
                 block(session)
             } catch (e: Exception) {
-                Logs.error(tag = tag, msg = "Start flow for network request error:", tr = e)
+                Logs.error(tag = tag, msg = "Start authenticated flow error:", tr = e)
                 emit(
                     RequestState.Error(
                         ResponseMessage(
