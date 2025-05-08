@@ -63,6 +63,12 @@
     <string name="unexpected_error">Unexpected error</string>
     <string name="invalid_state">Invalid state</string>
     <string name="invalid_credentials">Invalid credentials</string>
+    <string name="checking_session">Checking session</string>
+    <string name="loading_server_session">Loading server session</string>
+    <string name="no_session_found">No session found</string>
+    <string name="starting_session">Starting new session</string>
+    <string name="session_started">Session started</string>
+    <string name="failed_to_start_session">Failed to start new session</string>
     <!--HTTP Status Messages-->
     <string name="bad_request">Invalid request</string>
     <string name="unauthorized">You are not authorized to perform this action</string>

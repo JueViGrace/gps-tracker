@@ -39,7 +39,7 @@ func (h *authHandler) login(c *fiber.Ctx) error {
 
 	}
 
-	res = types.RespondCreated(session, "Success")
+	res = types.RespondOk(session, "Success")
 	return c.Status(res.Status).JSON(res)
 }
 
@@ -53,6 +53,6 @@ func (h *authHandler) refresh(c *fiber.Ctx, data *types.AuthData) error {
 
 	}
 
-	res = types.RespondCreated(session, "Success")
+	res = types.RespondOk(session, "Success")
 	return c.Status(res.Status).JSON(res)
 }

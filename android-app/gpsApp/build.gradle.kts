@@ -50,7 +50,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "IS_DEBUG", "true")
             val baseUrl: String =
                 gradleLocalProperties(rootProject.rootDir, providers).getProperty("DEV_URL")

@@ -1,12 +1,15 @@
 package com.jvg.gpsapp.auth.data
 
+import android.R.attr.data
 import com.jvg.gpsapp.api.ApiOperation
 import com.jvg.gpsapp.api.auth.AuthClient
 import com.jvg.gpsapp.api.auth.model.AuthResponse
 import com.jvg.gpsapp.database.helpers.AuthHelper
 import com.jvg.gpsapp.shared.data.StandardRepository
+import com.jvg.gpsapp.shared.data.mappers.auth.toSession
 import com.jvg.gpsapp.types.state.RequestState
 import com.jvg.gpsapp.types.state.ResponseMessage
+import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -22,7 +25,6 @@ class DefaultAuthRepository(
     override val authHelper: AuthHelper,
     override val coroutineProvider: CoroutineProvider,
 ) : AuthRepository {
-
     override fun activeSession(): Flow<RequestState<Boolean>> = startAuthenticatedFlow { session ->
         emit(RequestState.Success(true))
     }
@@ -44,7 +46,7 @@ class DefaultAuthRepository(
                         )
                     )
                 scope.launch {
-                    // todo: update session
+                    updateAuthentication(data.toSession().copy(active = true))
                 }
                 emit(RequestState.Success(Unit))
             }
@@ -59,6 +61,7 @@ class DefaultAuthRepository(
                 )
             }
             is ApiOperation.Success -> {
+                Logs.debug(tag, "Login data: ${call.value.data}")
                 val data: AuthResponse = call.value.data
                     ?: return@startFlow emit(
                         RequestState.Error(
@@ -67,8 +70,9 @@ class DefaultAuthRepository(
                             )
                         )
                     )
+                Logs.debug(tag, "Login data: $data")
                 scope.launch {
-                    // todo: update session
+                    updateAuthentication(data.toSession().copy(active = true))
                 }
                 emit(RequestState.Success(Unit))
             }

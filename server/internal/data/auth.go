@@ -54,15 +54,15 @@ func (s *authStore) CreateSession() (session *types.AuthResponse, err error) {
 		return nil, err
 	}
 
-	newTokens, err := createTokens(sessionId)
+	session, err = createTokens(sessionId)
 	if err != nil {
 		return nil, err
 	}
 
 	err = s.queries.CreateSession(s.ctx, database.CreateSessionParams{
-		ID:           newTokens.ID.String(),
-		RefreshToken: newTokens.RefreshToken,
-		AccessToken:  newTokens.AccessToken,
+		ID:           session.ID.String(),
+		RefreshToken: session.RefreshToken,
+		AccessToken:  session.AccessToken,
 	})
 	if err != nil {
 		return nil, err
@@ -77,15 +77,15 @@ func (s *authStore) Refresh(id uuid.UUID) (session *types.AuthResponse, err erro
 		return nil, err
 	}
 
-	newTokens, err := createTokens(savedSession.ID)
+	session, err = createTokens(savedSession.ID)
 	if err != nil {
 		return nil, err
 	}
 
 	err = s.queries.UpdateSession(s.ctx, database.UpdateSessionParams{
-		ID:           newTokens.ID.String(),
-		RefreshToken: newTokens.RefreshToken,
-		AccessToken:  newTokens.AccessToken,
+		ID:           session.ID.String(),
+		RefreshToken: session.RefreshToken,
+		AccessToken:  session.AccessToken,
 	})
 	if err != nil {
 		return nil, err

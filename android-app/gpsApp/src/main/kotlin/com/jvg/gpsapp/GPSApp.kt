@@ -1,6 +1,7 @@
 package com.jvg.gpsapp
 
 import android.app.Application
+import com.jvg.gpsapp.api.client.NetworkClient
 import com.jvg.gpsapp.app.di.appModule
 import com.jvg.gpsapp.di.KoinBuilder
 import org.koin.android.ext.koin.androidContext
@@ -11,6 +12,7 @@ import org.koin.dsl.koinApplication
 class GPSApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        NetworkClient.BASE_URL = BuildConfig.BASE_URL
 
         KoinBuilder(koinApplication())
             .addConfig(appDeclaration = {

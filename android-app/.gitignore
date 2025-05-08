@@ -6,3 +6,20 @@ build
 
 .idea
 .kotlin
+
+*.iml
+**/build/
+xcuserdata
+!src/**/build/
+local.properties
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+kls_database.db

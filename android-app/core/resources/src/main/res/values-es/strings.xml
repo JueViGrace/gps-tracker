@@ -60,6 +60,12 @@
     <string name="unexpected_error">Unexpected error</string>
     <string name="invalid_state">Estado inválido</string>
     <string name="invalid_credentials">Credenciales inválidas</string>
+    <string name="checking_session">Comprobando sesión</string>
+    <string name="loading_server_session">Cargando sesión del servidor</string>
+    <string name="no_session_found">No se encontró ninguna sesión</string>
+    <string name="starting_session">Empezando nueva sesión</string>
+    <string name="session_started">Sesión iniciada</string>
+    <string name="failed_to_start_session">Error al iniciar sesión</string>
     <!--HTTP Status Messages-->
     <string name="bad_request">Petición invalida</string>
     <string name="unauthorized">No estás autorizado para realizar esta acción</string>

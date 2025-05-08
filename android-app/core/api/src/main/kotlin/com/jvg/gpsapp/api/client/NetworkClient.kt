@@ -139,14 +139,13 @@ interface NetworkClient {
     }
 
     companion object {
-        // todo: assign base url
         var BASE_URL: String = ""
         const val TIMEOUT: Long = 120_000
     }
 }
 
 internal fun URLBuilder.setupUrl(urlString: String) {
-    val url = "/api/$urlString"
+    val url = "/api$urlString"
     if (url.contains("?")) {
         val path: List<String> = url.split("?")
 
@@ -238,7 +237,7 @@ interface StandardClient : NetworkClient {
                         response = APIResponse(
                             status = response.status.value,
                             description = response.status.description,
-                            data = null,
+                            data = response,
                             message = "Success",
                             time = Dates.currentTime.formatDate(),
                         )

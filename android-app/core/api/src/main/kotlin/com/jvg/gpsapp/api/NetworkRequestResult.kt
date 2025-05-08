@@ -1,6 +1,7 @@
 package com.jvg.gpsapp.api
 
 import com.jvg.gpsapp.types.state.ResponseMessage
+import com.jvg.gpsapp.util.Logs
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 
@@ -21,6 +22,7 @@ suspend inline fun<reified T> NetworkRequestResult.toApiOperation(): ApiOperatio
             }
 
             is NetworkRequestResult.Success -> {
+                Logs.debug("ToApiOperation", "data: ${response.data?.body<T>()}")
                 ApiOperation.Success(
                     value = APIResponse(
                         status = response.status,
