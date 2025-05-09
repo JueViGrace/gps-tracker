@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.CoroutineContext
 
 interface Repository {
@@ -29,6 +31,8 @@ interface Repository {
 
 interface StandardRepository : Repository {
     val authHelper: AuthHelper
+    val mutex: Mutex
+        get() = Mutex()
 
     fun <T> startFlow(
         block: suspend FlowCollector<RequestState<T>>.() -> Unit
@@ -79,6 +83,10 @@ interface StandardRepository : Repository {
     }
 
     fun updateAuthentication(session: Session) {
-        scope.launch { authHelper.updateSession(session.toDb()) }
+        scope.launch {
+            mutex.withLock {
+                authHelper.updateSession(session.toDb())
+            }
+        }
     }
 }

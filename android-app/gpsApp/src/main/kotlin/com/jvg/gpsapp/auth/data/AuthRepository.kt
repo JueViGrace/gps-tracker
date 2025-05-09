@@ -1,6 +1,5 @@
 package com.jvg.gpsapp.auth.data
 
-import android.R.attr.data
 import com.jvg.gpsapp.api.ApiOperation
 import com.jvg.gpsapp.api.auth.AuthClient
 import com.jvg.gpsapp.api.auth.model.AuthResponse
@@ -12,7 +11,6 @@ import com.jvg.gpsapp.types.state.ResponseMessage
 import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 interface AuthRepository : StandardRepository {
     fun activeSession(): Flow<RequestState<Boolean>>
@@ -45,9 +43,9 @@ class DefaultAuthRepository(
                             )
                         )
                     )
-                scope.launch {
-                    updateAuthentication(data.toSession().copy(active = true))
-                }
+
+                updateAuthentication(data.toSession().copy(active = true))
+
                 emit(RequestState.Success(Unit))
             }
         }
@@ -61,7 +59,6 @@ class DefaultAuthRepository(
                 )
             }
             is ApiOperation.Success -> {
-                Logs.debug(tag, "Login data: ${call.value.data}")
                 val data: AuthResponse = call.value.data
                     ?: return@startFlow emit(
                         RequestState.Error(
@@ -70,10 +67,7 @@ class DefaultAuthRepository(
                             )
                         )
                     )
-                Logs.debug(tag, "Login data: $data")
-                scope.launch {
-                    updateAuthentication(data.toSession().copy(active = true))
-                }
+                updateAuthentication(data.toSession().copy(active = true))
                 emit(RequestState.Success(Unit))
             }
         }

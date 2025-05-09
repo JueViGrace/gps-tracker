@@ -1,12 +1,13 @@
 package com.jvg.gpsapp.api.client
 
 import com.jvg.gpsapp.api.APIResponse
-import com.jvg.gpsapp.api.NetworkRequestResult
-import com.jvg.gpsapp.util.Dates
-import com.jvg.gpsapp.util.Dates.formatDate
+import com.jvg.gpsapp.api.ApiOperation
+import com.jvg.gpsapp.api.client.NetworkClient.Companion.setupUrl
+import com.jvg.gpsapp.types.state.ResponseMessage
 import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -45,123 +46,30 @@ interface NetworkClient {
 
     fun client(baseUrl: String? = null): HttpClient
 
-    suspend fun call(
-        method: HttpMethod,
-        baseUrl: String?,
-        urlString: String,
-        body: Any?,
-        headers: Map<String, String>,
-        contentType: ContentType,
-    ): NetworkRequestResult
-
-    suspend fun get(
-        baseUrl: String? = null,
-        urlString: String,
-        headers: Map<String, String> = emptyMap(),
-        contentType: ContentType = ContentType.Application.Json,
-    ): NetworkRequestResult {
-        return call(
-            method = HttpMethod.Get,
-            baseUrl = baseUrl,
-            urlString = urlString,
-            body = null,
-            headers = headers,
-            contentType = contentType
-        )
-    }
-
-    suspend fun post(
-        baseUrl: String? = null,
-        urlString: String,
-        body: Any? = null,
-        headers: Map<String, String> = emptyMap(),
-        contentType: ContentType = ContentType.Application.Json,
-    ): NetworkRequestResult {
-        return call(
-            method = HttpMethod.Post,
-            baseUrl = baseUrl,
-            urlString = urlString,
-            body = body,
-            headers = headers,
-            contentType = contentType
-        )
-    }
-
-    suspend fun put(
-        baseUrl: String? = null,
-        urlString: String,
-        body: Any? = null,
-        headers: Map<String, String> = emptyMap(),
-        contentType: ContentType = ContentType.Application.Json,
-    ): NetworkRequestResult {
-        return call(
-            method = HttpMethod.Put,
-            baseUrl = baseUrl,
-            urlString = urlString,
-            body = body,
-            headers = headers,
-            contentType = contentType
-        )
-    }
-
-    suspend fun patch(
-        baseUrl: String? = null,
-        urlString: String,
-        body: Any? = null,
-        headers: Map<String, String> = emptyMap(),
-        contentType: ContentType = ContentType.Application.Json,
-    ): NetworkRequestResult {
-        return call(
-            method = HttpMethod.Patch,
-            baseUrl = baseUrl,
-            urlString = urlString,
-            body = body,
-            headers = headers,
-            contentType = contentType
-        )
-    }
-
-    suspend fun delete(
-        baseUrl: String? = null,
-        urlString: String,
-        body: Any? = null,
-        headers: Map<String, String> = emptyMap(),
-        contentType: ContentType = ContentType.Application.Json,
-    ): NetworkRequestResult {
-        return call(
-            method = HttpMethod.Delete,
-            baseUrl = baseUrl,
-            urlString = urlString,
-            body = body,
-            headers = headers,
-            contentType = contentType
-        )
-    }
-
     companion object {
         var BASE_URL: String = ""
         const val TIMEOUT: Long = 120_000
-    }
-}
 
-internal fun URLBuilder.setupUrl(urlString: String) {
-    val url = "/api$urlString"
-    if (url.contains("?")) {
-        val path: List<String> = url.split("?")
+        fun URLBuilder.setupUrl(urlString: String) {
+            val url = "/api$urlString"
+            if (url.contains("?")) {
+                val path: List<String> = url.split("?")
 
-        path(path[0])
-        var pair: List<String>
-        if (path[1].contains("&")) {
-            path[1].split("&").forEach { parameter ->
-                pair = parameter.split("=")
-                parameters.append(pair[0], pair[1])
+                path(path[0])
+                var pair: List<String>
+                if (path[1].contains("&")) {
+                    path[1].split("&").forEach { parameter ->
+                        pair = parameter.split("=")
+                        parameters.append(pair[0], pair[1])
+                    }
+                } else {
+                    pair = path[1].split("=")
+                    parameters.append(pair[0], pair[1])
+                }
+            } else {
+                path(url)
             }
-        } else {
-            pair = path[1].split("=")
-            parameters.append(pair[0], pair[1])
         }
-    } else {
-        path(url)
     }
 }
 
@@ -203,70 +111,137 @@ interface StandardClient : NetworkClient {
             url(urlString = baseUrl ?: NetworkClient.BASE_URL)
         }
     }
+}
 
-    override suspend fun call(
-        method: HttpMethod,
-        baseUrl: String?,
-        urlString: String,
-        body: Any?,
-        headers: Map<String, String>,
-        contentType: ContentType,
-    ): NetworkRequestResult {
-        return try {
-            scope.coroutineContext.ensureActive()
-            val response: HttpResponse = client(baseUrl).request {
-                this.method = method
-                url { url ->
-                    url.setupUrl(urlString)
-                }
-                contentType(contentType)
-                headers.forEach { (key: String, value: String) ->
-                    headers {
-                        append(key, value)
-                    }
-                }
-                if (body != null) setBody(body)
+suspend inline fun<reified T> NetworkClient.call(
+    method: HttpMethod,
+    baseUrl: String?,
+    urlString: String,
+    body: Any?,
+    headers: Map<String, String>,
+    contentType: ContentType,
+): ApiOperation<T> {
+    return try {
+        scope.coroutineContext.ensureActive()
+        val response: HttpResponse = client(baseUrl).request {
+            this.method = method
+            url { url ->
+                url.setupUrl(urlString)
             }
-
-            when (response.status) {
-                HttpStatusCode.OK,
-                HttpStatusCode.Created,
-                HttpStatusCode.Accepted,
-                HttpStatusCode.NoContent -> {
-                    NetworkRequestResult.Success(
-                        response = APIResponse(
-                            status = response.status.value,
-                            description = response.status.description,
-                            data = response,
-                            message = "Success",
-                            time = Dates.currentTime.formatDate(),
-                        )
-                    )
-                }
-
-                else -> {
-                    NetworkRequestResult.Failure(
-                        errorResponse = APIResponse(
-                            status = HttpStatusCode.InternalServerError.value,
-                            description = HttpStatusCode.InternalServerError.description,
-                            data = response,
-                            message = "Error",
-                            time = Dates.currentTime.formatDate(),
-                        ),
-                    )
+            contentType(contentType)
+            headers.forEach { (key: String, value: String) ->
+                headers {
+                    append(key, value)
                 }
             }
-        } catch (e: Exception) {
-            Logs.error(tag = tag, msg = "Call error:", tr = e)
-            NetworkRequestResult.Failure(
-                errorResponse = APIResponse(
-                    status = HttpStatusCode.InternalServerError.value,
-                    description = HttpStatusCode.InternalServerError.description,
-                    data = null,
-                    message = e.message ?: "",
-                    time = Dates.currentTime.formatDate(),
-                ),
-            )
+            if (body != null) setBody(body)
         }
+
+        val body: APIResponse<T> = response.body()
+
+        when (response.status) {
+            HttpStatusCode.OK,
+            HttpStatusCode.Created,
+            HttpStatusCode.Accepted,
+            HttpStatusCode.NoContent -> {
+                ApiOperation.Success(body)
+            }
+            else -> {
+                ApiOperation.Failure(
+                    error = ResponseMessage(body.message),
+                )
+            }
+        }
+    } catch (e: Exception) {
+        Logs.error(tag = tag, msg = "Call error:", tr = e)
+        ApiOperation.Failure(
+            error = ResponseMessage(
+                message = e.message
+            )
+        )
     }
+}
+
+suspend inline fun<reified T> NetworkClient.get(
+    baseUrl: String? = null,
+    urlString: String,
+    headers: Map<String, String> = emptyMap(),
+    contentType: ContentType = ContentType.Application.Json,
+): ApiOperation<T> {
+    return call(
+        method = HttpMethod.Get,
+        baseUrl = baseUrl,
+        urlString = urlString,
+        body = null,
+        headers = headers,
+        contentType = contentType
+    )
+}
+
+suspend inline fun<reified T> NetworkClient.post(
+    baseUrl: String? = null,
+    urlString: String,
+    body: Any? = null,
+    headers: Map<String, String> = emptyMap(),
+    contentType: ContentType = ContentType.Application.Json,
+): ApiOperation<T> {
+    return call(
+        method = HttpMethod.Post,
+        baseUrl = baseUrl,
+        urlString = urlString,
+        body = body,
+        headers = headers,
+        contentType = contentType
+    )
+}
+
+suspend inline fun<reified T> NetworkClient.put(
+    baseUrl: String? = null,
+    urlString: String,
+    body: Any? = null,
+    headers: Map<String, String> = emptyMap(),
+    contentType: ContentType = ContentType.Application.Json,
+): ApiOperation<T> {
+    return call(
+        method = HttpMethod.Put,
+        baseUrl = baseUrl,
+        urlString = urlString,
+        body = body,
+        headers = headers,
+        contentType = contentType
+    )
+}
+
+suspend inline fun<reified T> NetworkClient.patch(
+    baseUrl: String? = null,
+    urlString: String,
+    body: Any? = null,
+    headers: Map<String, String> = emptyMap(),
+    contentType: ContentType = ContentType.Application.Json,
+): ApiOperation<T> {
+    return call(
+        method = HttpMethod.Patch,
+        baseUrl = baseUrl,
+        urlString = urlString,
+        body = body,
+        headers = headers,
+        contentType = contentType
+    )
+}
+
+suspend inline fun<reified T> NetworkClient.delete(
+    baseUrl: String? = null,
+    urlString: String,
+    body: Any? = null,
+    headers: Map<String, String> = emptyMap(),
+    contentType: ContentType = ContentType.Application.Json,
+): ApiOperation<T> {
+    return call(
+        method = HttpMethod.Delete,
+        baseUrl = baseUrl,
+        urlString = urlString,
+        body = body,
+        headers = headers,
+        contentType = contentType
+    )
 }

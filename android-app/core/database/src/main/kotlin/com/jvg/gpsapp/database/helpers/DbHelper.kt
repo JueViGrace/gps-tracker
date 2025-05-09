@@ -9,6 +9,7 @@ import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import com.jvg.gpstracker.database.GPSDb
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -53,6 +54,7 @@ suspend inline fun<reified T : Any> DbHelper.withDatabase(
 ): T? {
     return withContext(coroutineContext) {
         try {
+            scope.coroutineContext.ensureActive()
             mutex.withLock {
                 block(db)
             }

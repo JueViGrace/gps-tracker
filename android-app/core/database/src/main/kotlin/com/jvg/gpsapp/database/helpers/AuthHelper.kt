@@ -1,6 +1,8 @@
 package com.jvg.gpsapp.database.helpers
 
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import com.jvg.gpsapp.database.driver.DriverFactory
+import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import migrations.Gps_session
 
@@ -30,6 +32,7 @@ class DefaultAuthHelper(
     }
 
     override suspend fun updateSession(session: Gps_session) {
+        Logs.debug(tag = tag, msg = "Updating session: $session")
         withDatabase { db ->
             db.transaction {
                 db.sessionQueries.updateToken(
