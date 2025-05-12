@@ -32,6 +32,13 @@
     <string name="month_dec">Dic</string>
     <string name="unspecified">No especificado</string>
     <string name="select">Seleccionar</string>
+    <string name="retry">Reintentar</string>
+    <string name="your_location">Tu ubicación actual</string>
+    <string name="locations">Ubicaciones</string>
+    <string name="latitude">Latitud</string>
+    <string name="longitude">Longitud</string>
+    <string name="altitude">Altitud</string>
+    <string name="time">Hora</string>
     <string name="privacy_policy">Política de privacidad</string>
     <string name="read_privacy_policy">Leer política de privacidad</string>
     <string name="accept_privacy_policy">Aceptar política de privacidad</string>

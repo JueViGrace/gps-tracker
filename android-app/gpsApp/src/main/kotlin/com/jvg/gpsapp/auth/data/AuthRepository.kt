@@ -8,7 +8,6 @@ import com.jvg.gpsapp.shared.data.StandardRepository
 import com.jvg.gpsapp.shared.data.mappers.auth.toSession
 import com.jvg.gpsapp.types.state.RequestState
 import com.jvg.gpsapp.types.state.ResponseMessage
-import com.jvg.gpsapp.util.Logs
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 import kotlinx.coroutines.flow.Flow
 
@@ -34,6 +33,7 @@ class DefaultAuthRepository(
                     RequestState.Error(call.error)
                 )
             }
+
             is ApiOperation.Success -> {
                 val data: AuthResponse = call.value.data
                     ?: return@startAuthenticatedFlow emit(
@@ -58,6 +58,7 @@ class DefaultAuthRepository(
                     RequestState.Error(call.error)
                 )
             }
+
             is ApiOperation.Success -> {
                 val data: AuthResponse = call.value.data
                     ?: return@startFlow emit(

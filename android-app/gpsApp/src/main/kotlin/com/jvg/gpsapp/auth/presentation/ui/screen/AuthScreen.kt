@@ -1,14 +1,15 @@
-package com.jvg.gpsapp.auth.presentation.screen
+package com.jvg.gpsapp.auth.presentation.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,27 +46,51 @@ fun AuthScreen(
             contentAlignment = Alignment.Center
         ) {
             if (!state.isAuthenticated) {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (state.isLoading) {
-                        CircularLoadingComponent()
-                    } else {
-                        BackgroundIcon(
-                            contentPadding = PaddingValues(4.dp),
-                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                            painter = painterResource(R.drawable.ic_x),
-                            contentDescription = stringResource(R.string.error),
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            6.dp,
+                            Alignment.CenterHorizontally
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (state.isLoading) {
+                            CircularLoadingComponent()
+                        } else {
+                            BackgroundIcon(
+                                contentPadding = PaddingValues(4.dp),
+                                backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                                painter = painterResource(R.drawable.ic_x),
+                                contentDescription = stringResource(R.string.error),
+                            )
+                        }
+                        state.message?.let { TextComponent(text = stringResource(it)) }
+                    }
+                    OutlinedButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        onClick = {
+                            viewmodel.initSession()
+                        }
+                    ) {
+                        TextComponent(
+                            text = stringResource(R.string.retry),
                         )
                     }
-                    state.message?.let { TextComponent(text = stringResource(it)) }
                 }
             } else {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        6.dp,
+                        Alignment.CenterHorizontally
+                    ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     BackgroundIcon(

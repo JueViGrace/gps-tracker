@@ -35,6 +35,13 @@
     <string name="month_dec">Dec</string>
     <string name="unspecified">Unspecified</string>
     <string name="select">Select</string>
+    <string name="retry">Retry</string>
+    <string name="your_location">Your current location</string>
+    <string name="locations">Locations</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="altitude">Altitude</string>
+    <string name="time">Time</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="read_privacy_policy">Read privacy policy</string>
     <string name="accept_privacy_policy">Accept privacy policy</string>

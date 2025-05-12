@@ -46,27 +46,32 @@ class AuthViewModel(
                             state.copy(
                                 message = R.string.no_session_found,
                                 isAuthenticated = false,
+                                shouldRetry = true,
                             )
                         }
                         delay(1000)
                         startSession()
                     }
+
                     is RequestState.Success -> {
                         _state.update { state ->
                             state.copy(
                                 isLoading = false,
                                 message = R.string.session_started,
                                 isAuthenticated = true,
+                                shouldRetry = false,
                             )
                         }
                         navigateHome()
                     }
+
                     else -> {
                         _state.update { state ->
                             state.copy(
                                 isLoading = true,
                                 message = R.string.loading_server_session,
                                 isAuthenticated = false,
+                                shouldRetry = false,
                             )
                         }
                     }
@@ -81,6 +86,7 @@ class AuthViewModel(
                 isLoading = true,
                 message = R.string.starting_session,
                 isAuthenticated = false,
+                shouldRetry = false,
             )
         }
         viewModelScope.launch {
@@ -93,7 +99,8 @@ class AuthViewModel(
                             state.copy(
                                 isLoading = false,
                                 message = R.string.failed_to_start_session,
-                                isAuthenticated = false
+                                isAuthenticated = false,
+                                shouldRetry = true,
                             )
                         }
                         messages.sendMessage(
@@ -101,22 +108,26 @@ class AuthViewModel(
                             description = result.error.message
                         )
                     }
+
                     is RequestState.Success -> {
                         _state.update { state ->
                             state.copy(
                                 isLoading = false,
                                 message = R.string.session_started,
                                 isAuthenticated = true,
+                                shouldRetry = false,
                             )
                         }
                         navigateHome()
                     }
+
                     else -> {
                         _state.update { state ->
                             state.copy(
                                 isLoading = true,
                                 message = R.string.loading_server_session,
                                 isAuthenticated = false,
+                                shouldRetry = false,
                             )
                         }
                     }
