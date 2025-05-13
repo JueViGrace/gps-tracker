@@ -33,7 +33,9 @@
     <string name="unspecified">No especificado</string>
     <string name="select">Seleccionar</string>
     <string name="retry">Reintentar</string>
-    <string name="your_location">Tu ubicación actual</string>
+    <string name="your_current_location">Tu ubicación actual</string>
+    <string name="previous_locations">Ubicaciones anteriores</string>
+    <string name="location_at">Ubicación el</string>
     <string name="locations">Ubicaciones</string>
     <string name="latitude">Latitud</string>
     <string name="longitude">Longitud</string>
@@ -43,6 +45,11 @@
     <string name="read_privacy_policy">Leer política de privacidad</string>
     <string name="accept_privacy_policy">Aceptar política de privacidad</string>
     <string name="continue_question">¿Desea continuar?</string>
+    <string name="permission_required">Permiso requerido</string>
+    <string name="grant_permission">Dar permiso</string>
+    <string name="grant_coarse_permission">Dar permiso de ubicación aproximada</string>
+    <string name="grant_fine_permission">Dar permiso de ubicación precisa</string>
+    <string name="location_required">Permisos de ubicación son requeridos</string>
     <string name="please_grant_permission">Por favor confirma el permiso para seguir con el proceso.</string>
     <string name="close">Cerrar</string>
     <string name="previous_page">Página anterior</string>
@@ -63,6 +70,7 @@
     <string name="open_link">Abrir enlace</string>
     <string name="update">Actualizar</string>
     <!--Error Messages-->
+    <string name="not_available">No disponible</string>
     <string name="authenticate_first">Necesitas autenticarte primero</string>
     <string name="unexpected_error">Unexpected error</string>
     <string name="invalid_state">Estado inválido</string>

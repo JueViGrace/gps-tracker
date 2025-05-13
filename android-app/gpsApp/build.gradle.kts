@@ -101,6 +101,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
 
+    // Accompanist
+    implementation(libs.accompanist.permissions)
+
     // UI
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui)

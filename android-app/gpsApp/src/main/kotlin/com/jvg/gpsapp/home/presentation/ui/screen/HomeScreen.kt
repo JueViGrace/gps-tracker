@@ -1,41 +1,52 @@
 package com.jvg.gpsapp.home.presentation.ui.screen
 
 import android.Manifest
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.jvg.gpsapp.app.presentation.ui.components.permissions.PermissionRequester
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.jvg.gpsapp.home.presentation.state.HomeState
+import com.jvg.gpsapp.home.presentation.ui.components.CurrentLocationComponent
+import com.jvg.gpsapp.home.presentation.ui.components.TrackingList
 import com.jvg.gpsapp.home.presentation.viewmodel.HomeViewModel
 import com.jvg.gpsapp.resources.R
 import com.jvg.gpsapp.ui.Fonts
-import com.jvg.gpsapp.ui.components.LocationComponent
 import com.jvg.gpsapp.ui.components.standard.display.TextComponent
 import com.jvg.gpsapp.ui.components.standard.layout.bars.TopBarComponent
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen() {
     val viewmodel: HomeViewModel = koinViewModel()
+    val state: HomeState by viewmodel.state.collectAsStateWithLifecycle()
+    val coarsePermission = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION)
+    val finePermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    PermissionRequester(
-        permission = Manifest.permission.ACCESS_FINE_LOCATION,
-    ) { isGranted ->
+    LaunchedEffect(true) {
+        coarsePermission.launchPermissionRequest()
     }
 
-    PermissionRequester(
-        permission = Manifest.permission.ACCESS_COARSE_LOCATION,
-    ) { isGranted ->
+    LaunchedEffect(true) {
+        finePermission.launchPermissionRequest()
     }
 
     Scaffold(
@@ -50,38 +61,74 @@ fun HomeScreen() {
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                TextComponent(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.your_location),
-                    textAlign = TextAlign.Center,
-                    style = Fonts.mediumTextStyle,
-                )
+            AnimatedVisibility(visible = coarsePermission.status.isGranted && finePermission.status.isGranted) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CurrentLocationComponent(
+                        tracking = state.tracking
+                    )
+                    HorizontalDivider()
+                    TrackingList(state)
+                }
+            }
 
-                LocationComponent(
-                    title = stringResource(R.string.latitude),
-                    value = "",
-                )
-                LocationComponent(
-                    title = stringResource(R.string.longitude),
-                    value = "",
-                )
-                LocationComponent(
-                    title = stringResource(R.string.altitude),
-                    value = "",
-                )
-                LocationComponent(
-                    title = stringResource(R.string.time),
-                    value = "",
-                )
+            AnimatedVisibility(
+                visible = !coarsePermission.status.isGranted || !finePermission.status.isGranted
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    TextComponent(
+                        text = stringResource(R.string.permission_required),
+                        textAlign = TextAlign.Center,
+                        style = Fonts.extraLargeTextStyle,
+                    )
+                    TextComponent(
+                        text = stringResource(R.string.location_required),
+                        textAlign = TextAlign.Center,
+                        style = Fonts.mediumTextStyle,
+                    )
+                    TextComponent(
+                        text = stringResource(R.string.please_grant_permission),
+                        textAlign = TextAlign.Center,
+                    )
+
+                    if (!coarsePermission.status.isGranted) {
+                        FilledTonalButton(
+                            onClick = {
+                                coarsePermission.launchPermissionRequest()
+                            }
+                        ) {
+                            TextComponent(
+                                text = stringResource(R.string.grant_coarse_permission)
+                            )
+                        }
+                    }
+
+                    if (!finePermission.status.isGranted) {
+                        FilledTonalButton(
+                            onClick = {
+                                finePermission.launchPermissionRequest()
+                            }
+                        ) {
+                            TextComponent(
+                                text = stringResource(R.string.grant_fine_permission)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

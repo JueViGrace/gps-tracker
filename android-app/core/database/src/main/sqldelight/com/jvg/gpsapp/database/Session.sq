@@ -3,7 +3,7 @@ SELECT *
 FROM gps_session
 WHERE active = 1;
 
-insertSession:
+saveSession:
 INSERT OR REPLACE INTO gps_session(
     id,
     access_token,

@@ -43,8 +43,8 @@ object Dates {
         }
     }
 
-    fun LocalDateTime.toReadableDate(month: String): String {
-        return "${this.date.dayOfMonth} $month, ${this.year}"
+    fun LocalDateTime.toReadableDate(): String {
+        return "${this.date.dayOfMonth} ${formatMonthName(this.dayOfMonth)}, ${this.year}"
     }
 
     fun LocalDateTime.formatDate(): String {

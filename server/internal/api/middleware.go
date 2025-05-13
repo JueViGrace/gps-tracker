@@ -1,10 +1,12 @@
 package api
 
 import (
+	"fmt"
 	"gps-tracker/internal/data"
 	"gps-tracker/internal/types"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func (a *api) authenticatedHandler(handler types.AuthDataHandler) fiber.Handler {
@@ -21,6 +23,7 @@ func (a *api) authenticatedHandler(handler types.AuthDataHandler) fiber.Handler 
 
 func getUserDataForReq(c *fiber.Ctx, db data.Storage) (*types.AuthData, error) {
 	jwt, err := types.ExtractJWTFromHeader(c, func(s string) {
+		log.Debug(fmt.Sprintf("Expired: %s", s))
 		db.AuthStore().DeleteSessionByToken(s)
 	})
 	if err != nil {

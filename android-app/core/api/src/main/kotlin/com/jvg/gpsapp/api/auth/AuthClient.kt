@@ -23,7 +23,7 @@ class DefaultAuthClient(
     override suspend fun refresh(refreshToken: String): ApiOperation<AuthResponse> {
         return post(
             urlString = "/auth/refresh",
-            body = mapOf("refreshToken" to refreshToken)
+            headers = mapOf("Authorization" to "Bearer $refreshToken")
         )
     }
 }

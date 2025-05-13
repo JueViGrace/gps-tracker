@@ -35,6 +35,9 @@ dependencies {
     // Util
     implementation(projects.core.util)
 
+    // Accompanist
+    implementation(libs.accompanist.permissions)
+
     // Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

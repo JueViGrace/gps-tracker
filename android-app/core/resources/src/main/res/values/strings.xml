@@ -36,7 +36,9 @@
     <string name="unspecified">Unspecified</string>
     <string name="select">Select</string>
     <string name="retry">Retry</string>
-    <string name="your_location">Your current location</string>
+    <string name="your_current_location">Your current location</string>
+    <string name="previous_locations">Previous locations</string>
+    <string name="location_at">Location at</string>
     <string name="locations">Locations</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
@@ -46,6 +48,11 @@
     <string name="read_privacy_policy">Read privacy policy</string>
     <string name="accept_privacy_policy">Accept privacy policy</string>
     <string name="continue_question">Would you like to continue?</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="grant_coarse_permission">Grant coarse location permission</string>
+    <string name="grant_fine_permission">Grant fine location permission</string>
+    <string name="permission_required">Permission required</string>
+    <string name="location_required">Location permissions are required</string>
     <string name="please_grant_permission">Please grant the permission to continue with the process.</string>
     <string name="close">Close</string>
     <string name="previous_page">Previous page</string>
@@ -66,6 +73,7 @@
     <string name="open_link">Open link</string>
     <string name="update">Update</string>
     <!--Error Messages-->
+    <string name="not_available">Not available</string>
     <string name="authenticate_first">You need to authenticate first</string>
     <string name="unexpected_error">Unexpected error</string>
     <string name="invalid_state">Invalid state</string>

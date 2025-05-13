@@ -17,14 +17,16 @@ fun LocationComponent(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextComponent(
+            modifier = Modifier.weight(1f),
             text = title,
             style = Fonts.mediumTextStyle,
         )
         TextComponent(
+            modifier = Modifier.weight(1f),
             text = value,
         )
     }

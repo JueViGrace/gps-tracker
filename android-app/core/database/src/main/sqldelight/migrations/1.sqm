@@ -6,3 +6,12 @@ CREATE TABLE IF NOT EXISTS gps_session(
     refresh_token TEXT NOT NULL,
     active INTEGER AS Boolean NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS gps_tracking(
+    session_id TEXT NOT NULL PRIMARY KEY,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    altitude REAL NOT NULL,
+    time TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES gps_session(id) ON DELETE CASCADE
+);

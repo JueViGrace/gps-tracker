@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS session_tracking(
     longitude REAL NOT NULL DEFAULT 0,
     altitude REAL NOT NULL DEFAULT 0,
     time TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    session_id TEXT NOT NULL,
+    session_id TEXT NOT NULL PRIMARY KEY,
     FOREIGN KEY (session_id) REFERENCES session(id)
 );
 

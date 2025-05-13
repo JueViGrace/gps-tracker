@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authRepository: AuthRepository,
+    private val repository: AuthRepository,
     override val messages: Messages,
     override val navigator: Navigator
 ) : BaseViewModel(messages = messages, navigator = navigator) {
@@ -26,6 +26,7 @@ class AuthViewModel(
     val state: StateFlow<AuthState> = _state.asStateFlow()
 
     fun initSession() {
+        // todo: refresh should not be done every time i think
         refresh()
     }
 
@@ -39,7 +40,7 @@ class AuthViewModel(
         }
         viewModelScope.launch {
             delay(1000)
-            authRepository.refresh().collect { result ->
+            repository.refresh().collect { result ->
                 when (result) {
                     is RequestState.Error -> {
                         _state.update { state ->
@@ -49,6 +50,7 @@ class AuthViewModel(
                                 shouldRetry = true,
                             )
                         }
+                        repository.cleanSession()
                         delay(1000)
                         startSession()
                     }
@@ -91,7 +93,7 @@ class AuthViewModel(
         }
         viewModelScope.launch {
             delay(1000)
-            authRepository.login().collect { result ->
+            repository.login().collect { result ->
                 when (result) {
                     is RequestState.Error -> {
                         // todo: retry logic?

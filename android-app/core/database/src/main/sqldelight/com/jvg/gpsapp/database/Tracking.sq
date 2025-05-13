@@ -1,0 +1,13 @@
+findTrackings:
+SELECT * FROM gps_tracking
+WHERE session_id = :id;
+
+saveTrackings:
+INSERT OR REPLACE INTO gps_tracking(
+    session_id,
+    latitude,
+    longitude,
+    altitude,
+    time
+)
+VALUES ?;

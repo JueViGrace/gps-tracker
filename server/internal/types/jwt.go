@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
@@ -86,6 +87,7 @@ func ValidateJWT(tokenString string) (*jwt.Token, error) {
 func ExtractJWTFromHeader(c *fiber.Ctx, expired func(string)) (*JwtData, error) {
 	header := strings.Join(c.GetReqHeaders()["Authorization"], "")
 
+	log.Debug(header)
 	if !strings.HasPrefix(header, "Bearer") {
 		return nil, errors.New("permission denied")
 	}
@@ -93,23 +95,27 @@ func ExtractJWTFromHeader(c *fiber.Ctx, expired func(string)) (*JwtData, error) 
 	tokenString := strings.Split(header, " ")[1]
 	token, err := ValidateJWT(tokenString)
 	if err != nil {
+		log.Debug(err.Error())
 		expired(tokenString)
 		return nil, errors.New("permission denied")
 	}
 
 	claims, ok := token.Claims.(*JwtClaims)
 	if !ok || !token.Valid {
+		log.Debug("invalid claims | invalid token")
 		expired(tokenString)
 		return nil, errors.New("permission denied")
 	}
 
 	if len(claims.Audience) > 1 || claims.
 		Audience[0] != "api" {
+		log.Debug("invalid audience")
 		expired(tokenString)
 		return nil, errors.New("permision denied")
 	}
 
 	if claims.Issuer != issuer {
+		log.Debug("invalid issuer")
 		expired(tokenString)
 		return nil, errors.New("permision denied")
 	}

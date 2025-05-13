@@ -1,7 +1,6 @@
 package com.jvg.gpsapp.shared.data
 
 import com.jvg.gpsapp.database.helpers.AuthHelper
-import com.jvg.gpsapp.shared.data.mappers.auth.toDb
 import com.jvg.gpsapp.shared.data.mappers.auth.toSession
 import com.jvg.gpsapp.types.auth.Session
 import com.jvg.gpsapp.types.state.RequestState
@@ -13,9 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.CoroutineContext
 
 interface Repository {
@@ -31,8 +27,6 @@ interface Repository {
 
 interface StandardRepository : Repository {
     val authHelper: AuthHelper
-    val mutex: Mutex
-        get() = Mutex()
 
     fun <T> startFlow(
         block: suspend FlowCollector<RequestState<T>>.() -> Unit
@@ -80,13 +74,5 @@ interface StandardRepository : Repository {
                 )
             }
         }.flowOn(coroutineContext)
-    }
-
-    fun updateAuthentication(session: Session) {
-        scope.launch {
-            mutex.withLock {
-                authHelper.updateSession(session.toDb())
-            }
-        }
     }
 }
