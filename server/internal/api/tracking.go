@@ -19,7 +19,7 @@ func (a *api) trackingRoutes(api fiber.Router) {
 	group := api.Group("/tracking")
 	handler := NewTrackingHandler(a.db.TrackingStore(), a.validator)
 
-	group.Post("/location", a.authenticatedHandler(handler.registerLocation))
+	group.Post("/register", a.authenticatedHandler(handler.registerLocation))
 	group.Get("/", a.authenticatedHandler(handler.getTracking))
 }
 
