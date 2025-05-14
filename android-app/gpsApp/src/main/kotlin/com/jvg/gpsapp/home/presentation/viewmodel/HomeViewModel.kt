@@ -1,13 +1,17 @@
 package com.jvg.gpsapp.home.presentation.viewmodel
 
+import android.location.Location
 import androidx.lifecycle.viewModelScope
 import com.jvg.gpsapp.home.data.HomeRepository
 import com.jvg.gpsapp.home.presentation.state.HomeState
 import com.jvg.gpsapp.resources.R
 import com.jvg.gpsapp.shared.presentation.viewmodel.BaseViewModel
 import com.jvg.gpsapp.types.state.RequestState
+import com.jvg.gpsapp.types.tracking.Tracking
 import com.jvg.gpsapp.ui.messages.Messages
 import com.jvg.gpsapp.ui.navigation.Navigator
+import com.jvg.gpsapp.util.Dates
+import com.jvg.gpsapp.util.Logs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,7 +43,7 @@ class HomeViewModel(
                             trackingError = true
                         )
                     }
-                    messages.sendMessage(R.string.unexpected_error, result.error.message)
+                    showMessage(R.string.unexpected_error, result.error.message)
                 }
 
                 is RequestState.Success -> {
@@ -61,6 +65,22 @@ class HomeViewModel(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    fun updateLocation(location: Location?) {
+        Logs.debug(tag, "Location updated: $location")
+        if (location != null) {
+            _state.update { state ->
+                state.copy(
+                    tracking = Tracking(
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        altitude = location.altitude,
+                        time = Dates.currentTime
+                    )
+                )
             }
         }
     }

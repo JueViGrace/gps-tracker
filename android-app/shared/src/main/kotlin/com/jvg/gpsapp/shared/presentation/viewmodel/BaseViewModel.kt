@@ -10,6 +10,8 @@ abstract class BaseViewModel(
     protected open val messages: Messages,
     protected open val navigator: Navigator,
 ) : ViewModel() {
+    protected val tag = this::class.simpleName ?: "BaseViewModel"
+
     protected fun showMessage(message: Int, description: String? = null) {
         viewModelScope.launch {
             messages.sendMessage(message, description)

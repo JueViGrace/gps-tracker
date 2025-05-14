@@ -100,6 +100,7 @@ dependencies {
     /* Android / Compose */
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.google.location)
 
     // Accompanist
     implementation(libs.accompanist.permissions)

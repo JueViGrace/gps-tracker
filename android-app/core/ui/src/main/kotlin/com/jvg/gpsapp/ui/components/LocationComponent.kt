@@ -21,12 +21,10 @@ fun LocationComponent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextComponent(
-            modifier = Modifier.weight(1f),
             text = title,
             style = Fonts.mediumTextStyle,
         )
         TextComponent(
-            modifier = Modifier.weight(1f),
             text = value,
         )
     }

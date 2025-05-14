@@ -105,7 +105,8 @@ class AuthViewModel(
                                 shouldRetry = true,
                             )
                         }
-                        messages.sendMessage(
+
+                        showMessage(
                             message = R.string.unexpected_error,
                             description = result.error.message
                         )
