@@ -11,7 +11,6 @@ import com.jvg.gpsapp.types.tracking.Tracking
 import com.jvg.gpsapp.ui.messages.Messages
 import com.jvg.gpsapp.ui.navigation.Navigator
 import com.jvg.gpsapp.util.Dates
-import com.jvg.gpsapp.util.Logs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -70,7 +69,6 @@ class HomeViewModel(
     }
 
     fun updateLocation(location: Location?) {
-        Logs.debug(tag, "Location updated: $location")
         if (location != null) {
             _state.update { state ->
                 state.copy(
@@ -81,6 +79,16 @@ class HomeViewModel(
                         time = Dates.currentTime
                     )
                 )
+            }
+
+            viewModelScope.launch {
+                _state.value.tracking?.let { tracking ->
+                    repository.sendTracking(tracking).collect { result ->
+                        if (result is RequestState.Error) {
+                            showMessage(R.string.unexpected_error, result.error.message)
+                        }
+                    }
+                }
             }
         }
     }

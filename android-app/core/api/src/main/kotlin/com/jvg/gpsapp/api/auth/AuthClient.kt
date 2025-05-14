@@ -1,7 +1,7 @@
 package com.jvg.gpsapp.api.auth
 
 import com.jvg.gpsapp.api.ApiOperation
-import com.jvg.gpsapp.api.auth.model.AuthResponse
+import com.jvg.gpsapp.api.auth.model.response.AuthResponse
 import com.jvg.gpsapp.api.client.StandardClient
 import com.jvg.gpsapp.api.client.post
 import com.jvg.gpsapp.util.coroutines.CoroutineProvider

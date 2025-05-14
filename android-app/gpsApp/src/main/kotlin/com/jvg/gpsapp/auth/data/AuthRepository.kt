@@ -2,7 +2,7 @@ package com.jvg.gpsapp.auth.data
 
 import com.jvg.gpsapp.api.ApiOperation
 import com.jvg.gpsapp.api.auth.AuthClient
-import com.jvg.gpsapp.api.auth.model.AuthResponse
+import com.jvg.gpsapp.api.auth.model.response.AuthResponse
 import com.jvg.gpsapp.database.helpers.AuthHelper
 import com.jvg.gpsapp.shared.data.StandardRepository
 import com.jvg.gpsapp.shared.data.mappers.auth.toDb

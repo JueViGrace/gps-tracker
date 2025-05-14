@@ -14,6 +14,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 object Dates {
+    private val tag = this::class.simpleName ?: "Dates"
     val currentTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
     val readableFormat: DateTimeFormat<LocalDateTime> = LocalDateTime.Format {
         date(LocalDate.Formats.ISO)
@@ -40,6 +41,15 @@ object Dates {
             11 -> R.string.month_nov
             12 -> R.string.month_dec
             else -> R.string.unspecified
+        }
+    }
+
+    fun parse(date: String): LocalDateTime {
+        return try {
+            readableFormat.parse(date)
+        } catch (e: IllegalArgumentException) {
+            Logs.error(tag, e.message, e)
+            currentTime
         }
     }
 

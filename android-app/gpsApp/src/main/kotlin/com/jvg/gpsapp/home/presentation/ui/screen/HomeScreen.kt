@@ -13,7 +13,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -87,23 +86,19 @@ fun HomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedVisibility(visible = coarsePermission.status.isGranted && finePermission.status.isGranted) {
-                if (locationRequest != null) {
-                    DisposableEffect(locationRequest) {
-                        val usePreciseLocation = if (finePermission.status.isGranted) {
-                            Priority.PRIORITY_HIGH_ACCURACY
-                        } else {
-                            Priority.PRIORITY_BALANCED_POWER_ACCURACY
-                        }
-                        locationRequest = LocationRequest.Builder(
-                            usePreciseLocation,
-                            TimeUnit.SECONDS.toMillis(1)
-                        ).build()
-
-                        onDispose {
-                            locationRequest = null
-                        }
+                LaunchedEffect(true) {
+                    val usePreciseLocation = if (finePermission.status.isGranted) {
+                        Priority.PRIORITY_HIGH_ACCURACY
+                    } else {
+                        Priority.PRIORITY_BALANCED_POWER_ACCURACY
                     }
+                    locationRequest = LocationRequest.Builder(
+                        usePreciseLocation,
+                        TimeUnit.SECONDS.toMillis(1)
+                    ).build()
+                }
 
+                if (locationRequest != null) {
                     LocationEffect(
                         locationRequest = locationRequest!!,
                     ) { location ->

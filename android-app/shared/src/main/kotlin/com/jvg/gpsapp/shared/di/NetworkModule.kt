@@ -2,6 +2,8 @@ package com.jvg.gpsapp.shared.di
 
 import com.jvg.gpsapp.api.auth.AuthClient
 import com.jvg.gpsapp.api.auth.DefaultAuthClient
+import com.jvg.gpsapp.api.tracking.DefaultTrackingClient
+import com.jvg.gpsapp.api.tracking.TrackingClient
 import dev.tmapps.konnection.Konnection
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -17,4 +19,6 @@ fun networkModule(): Module = module {
     }
 
     singleOf(::DefaultAuthClient) bind AuthClient::class
+
+    singleOf(::DefaultTrackingClient) bind TrackingClient::class
 }
