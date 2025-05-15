@@ -24,10 +24,6 @@ interface Repository {
         get() = coroutineProvider.defaultDispatcher
     val scope: CoroutineScope
         get() = coroutineProvider.createScope(coroutineContext)
-}
-
-interface StandardRepository : Repository {
-    val authHelper: AuthHelper
 
     fun <T> startFlow(
         block: suspend FlowCollector<RequestState<T>>.() -> Unit
@@ -49,8 +45,57 @@ interface StandardRepository : Repository {
         }.flowOn(coroutineContext)
     }
 
+    fun <T, R> startNetworkRequest(
+        call: suspend () -> ApiOperation<T>,
+        block: suspend FlowCollector<RequestState<R>>.(data: T) -> Unit,
+    ): Flow<RequestState<R>> {
+        return startFlow {
+            checkNetworkResponse(
+                call = call(),
+                onError = { error ->
+                    emit(error)
+                },
+                onSuccess = { data ->
+                    block(data)
+                }
+            )
+        }
+    }
+
+    suspend fun <T> checkNetworkResponse(
+        call: ApiOperation<T>,
+        onError: suspend (error: RequestState.Error) -> Unit,
+        onSuccess: suspend (data: T) -> Unit,
+    ) {
+        when (call) {
+            is ApiOperation.Failure -> {
+                onError(
+                    RequestState.Error(
+                        error = call.error
+                    )
+                )
+            }
+
+            is ApiOperation.Success -> {
+                val data: T = call.value.data
+                    ?: return onError(
+                        RequestState.Error(
+                            error = ResponseMessage(
+                                message = call.value.message
+                            )
+                        )
+                    )
+                onSuccess(data)
+            }
+        }
+    }
+}
+
+interface StandardRepository : Repository {
+    val authHelper: AuthHelper
+
     fun <T> startAuthenticatedFlow(
-        block: suspend FlowCollector<RequestState<T>>.(Session) -> Unit
+        block: suspend FlowCollector<RequestState<T>>.(session: Session) -> Unit
     ): Flow<RequestState<T>> {
         return flow {
             emit(RequestState.Loading)
@@ -77,61 +122,20 @@ interface StandardRepository : Repository {
         }.flowOn(coroutineContext)
     }
 
-    fun <T, R> startNetworkRequest(
-        call: suspend () -> ApiOperation<T>,
-        block: suspend FlowCollector<RequestState<R>>.(T) -> Unit,
-    ): Flow<RequestState<R>> {
-        return startFlow {
-            when (val call: ApiOperation<T> = call()) {
-                is ApiOperation.Failure -> {
-                    emit(
-                        RequestState.Error(
-                            error = call.error
-                        )
-                    )
-                }
-
-                is ApiOperation.Success -> {
-                    val data: T = call.value.data
-                        ?: return@startFlow emit(
-                            RequestState.Error(
-                                error = ResponseMessage(
-                                    message = call.value.message
-                                )
-                            )
-                        )
-                    block(data)
-                }
-            }
-        }
-    }
-
     fun <T, R> startAuthenticatedNetworkRequest(
         call: suspend (session: Session) -> ApiOperation<T>,
         block: suspend FlowCollector<RequestState<R>>.(session: Session, data: T) -> Unit,
     ): Flow<RequestState<R>> {
         return startAuthenticatedFlow { session ->
-            when (val call: ApiOperation<T> = call(session)) {
-                is ApiOperation.Failure -> {
-                    emit(
-                        RequestState.Error(
-                            error = call.error
-                        )
-                    )
-                }
-
-                is ApiOperation.Success -> {
-                    val data: T = call.value.data
-                        ?: return@startAuthenticatedFlow emit(
-                            RequestState.Error(
-                                error = ResponseMessage(
-                                    message = call.value.message
-                                )
-                            )
-                        )
+            checkNetworkResponse(
+                call = call(session),
+                onError = { error ->
+                    emit(error)
+                },
+                onSuccess = { data ->
                     block(session, data)
                 }
-            }
+            )
         }
     }
 }
