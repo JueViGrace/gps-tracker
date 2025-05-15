@@ -10,7 +10,7 @@ import com.jvg.gpsapp.util.coroutines.CoroutineProvider
 
 interface TrackingClient : StandardClient {
     suspend fun getTracking(token: String): ApiOperation<List<TrackingResponse>>
-    suspend fun sendTracking(token: String, tracking: TrackingDto): ApiOperation<Unit>
+    suspend fun sendTracking(token: String, tracking: TrackingDto): ApiOperation<String>
 }
 
 class DefaultTrackingClient(
@@ -23,7 +23,7 @@ class DefaultTrackingClient(
         )
     }
 
-    override suspend fun sendTracking(token: String, tracking: TrackingDto): ApiOperation<Unit> {
+    override suspend fun sendTracking(token: String, tracking: TrackingDto): ApiOperation<String> {
         return post(
             urlString = "/tracking/register",
             headers = mapOf("Authorization" to "Bearer $token"),

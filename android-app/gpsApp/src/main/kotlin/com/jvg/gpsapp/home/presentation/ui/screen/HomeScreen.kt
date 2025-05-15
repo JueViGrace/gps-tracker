@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +49,6 @@ import java.util.concurrent.TimeUnit
 fun HomeScreen() {
     val viewmodel: HomeViewModel = koinViewModel()
     val state: HomeState by viewmodel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
 
     var locationRequest by remember {
         mutableStateOf<LocationRequest?>(null)
@@ -94,7 +92,7 @@ fun HomeScreen() {
                     }
                     locationRequest = LocationRequest.Builder(
                         usePreciseLocation,
-                        TimeUnit.SECONDS.toMillis(1)
+                        TimeUnit.SECONDS.toMillis(3)
                     ).build()
                 }
 

@@ -1,5 +1,6 @@
 package com.jvg.gpsapp.shared.data
 
+import com.jvg.gpsapp.api.ApiOperation
 import com.jvg.gpsapp.database.helpers.AuthHelper
 import com.jvg.gpsapp.shared.data.mappers.auth.toSession
 import com.jvg.gpsapp.types.auth.Session
@@ -74,5 +75,63 @@ interface StandardRepository : Repository {
                 )
             }
         }.flowOn(coroutineContext)
+    }
+
+    fun <T, R> startNetworkRequest(
+        call: suspend () -> ApiOperation<T>,
+        block: suspend FlowCollector<RequestState<R>>.(T) -> Unit,
+    ): Flow<RequestState<R>> {
+        return startFlow {
+            when (val call: ApiOperation<T> = call()) {
+                is ApiOperation.Failure -> {
+                    emit(
+                        RequestState.Error(
+                            error = call.error
+                        )
+                    )
+                }
+
+                is ApiOperation.Success -> {
+                    val data: T = call.value.data
+                        ?: return@startFlow emit(
+                            RequestState.Error(
+                                error = ResponseMessage(
+                                    message = call.value.message
+                                )
+                            )
+                        )
+                    block(data)
+                }
+            }
+        }
+    }
+
+    fun <T, R> startAuthenticatedNetworkRequest(
+        call: suspend (session: Session) -> ApiOperation<T>,
+        block: suspend FlowCollector<RequestState<R>>.(session: Session, data: T) -> Unit,
+    ): Flow<RequestState<R>> {
+        return startAuthenticatedFlow { session ->
+            when (val call: ApiOperation<T> = call(session)) {
+                is ApiOperation.Failure -> {
+                    emit(
+                        RequestState.Error(
+                            error = call.error
+                        )
+                    )
+                }
+
+                is ApiOperation.Success -> {
+                    val data: T = call.value.data
+                        ?: return@startAuthenticatedFlow emit(
+                            RequestState.Error(
+                                error = ResponseMessage(
+                                    message = call.value.message
+                                )
+                            )
+                        )
+                    block(session, data)
+                }
+            }
+        }
     }
 }

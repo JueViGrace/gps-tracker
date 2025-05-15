@@ -4,6 +4,8 @@ import com.jvg.gpsapp.database.driver.DefaultDriverFactory
 import com.jvg.gpsapp.database.driver.DriverFactory
 import com.jvg.gpsapp.database.helpers.AuthHelper
 import com.jvg.gpsapp.database.helpers.DefaultAuthHelper
+import com.jvg.gpsapp.database.helpers.DefaultTrackingHelper
+import com.jvg.gpsapp.database.helpers.TrackingHelper
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -13,4 +15,6 @@ fun databaseModule(): Module = module {
     singleOf(::DefaultDriverFactory) bind DriverFactory::class
 
     singleOf(::DefaultAuthHelper) bind AuthHelper::class
+
+    singleOf(::DefaultTrackingHelper) bind TrackingHelper::class
 }

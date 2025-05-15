@@ -10,12 +10,14 @@ import com.jvg.gpsapp.types.state.RequestState
 import com.jvg.gpsapp.types.tracking.Tracking
 import com.jvg.gpsapp.ui.messages.Messages
 import com.jvg.gpsapp.ui.navigation.Navigator
-import com.jvg.gpsapp.util.Dates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class HomeViewModel(
     private val repository: HomeRepository,
@@ -76,7 +78,7 @@ class HomeViewModel(
                         latitude = location.latitude,
                         longitude = location.longitude,
                         altitude = location.altitude,
-                        time = Dates.currentTime
+                        time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                     )
                 )
             }
@@ -84,8 +86,16 @@ class HomeViewModel(
             viewModelScope.launch {
                 _state.value.tracking?.let { tracking ->
                     repository.sendTracking(tracking).collect { result ->
-                        if (result is RequestState.Error) {
-                            showMessage(R.string.unexpected_error, result.error.message)
+                        when (result) {
+                            is RequestState.Error -> {
+                                showMessage(R.string.unexpected_error, result.error.message)
+                            }
+
+                            is RequestState.Success -> {
+                                getTracking()
+                            }
+
+                            else -> {}
                         }
                     }
                 }

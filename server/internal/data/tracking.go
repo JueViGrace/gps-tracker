@@ -4,6 +4,8 @@ import (
 	"context"
 	"gps-tracker/internal/database"
 	"gps-tracker/internal/types"
+	"gps-tracker/internal/util"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -50,13 +52,20 @@ func (s *trackingStore) GetTrackings(sessionId uuid.UUID) (trackings []types.Tra
 }
 
 func (s *trackingStore) CreateTracking(sessionId uuid.UUID, t *types.TrackingRequest) (err error) {
-	err = s.queries.CreateTracking(s.ctx, database.CreateTrackingParams{
+	time, err := time.Parse(time.DateTime, t.Time)
+	if err != nil {
+		return err
+	}
+
+	params := database.CreateTrackingParams{
 		Latitude:  t.Latitude,
 		Longitude: t.Longitude,
 		Altitude:  t.Altitude,
-		Time:      t.Time.String(),
+		Time:      util.FormatDate(time),
 		SessionID: sessionId.String(),
-	})
+	}
+
+	err = s.queries.CreateTracking(s.ctx, params)
 	if err != nil {
 		return err
 	}

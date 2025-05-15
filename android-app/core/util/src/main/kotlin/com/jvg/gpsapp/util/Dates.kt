@@ -15,12 +15,19 @@ import kotlinx.datetime.toLocalDateTime
 
 object Dates {
     private val tag = this::class.simpleName ?: "Dates"
-    val currentTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-    val readableFormat: DateTimeFormat<LocalDateTime> = LocalDateTime.Format {
+    val currentTime: LocalDateTime =
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val normalFormat: DateTimeFormat<LocalDateTime> = LocalDateTime.Format {
+        date(LocalDate.Formats.ISO)
+        char('T')
+        time(LocalTime.Formats.ISO)
+    }
+    val dateTimeFormat: DateTimeFormat<LocalDateTime> = LocalDateTime.Format {
         date(LocalDate.Formats.ISO)
         char(' ')
         time(LocalTime.Formats.ISO)
     }
+
     val yesterday: LocalDateTime = currentTime
         .toInstant(TimeZone.Companion.UTC)
         .minus(DateTimePeriod(days = 1), TimeZone.Companion.UTC)
@@ -45,19 +52,16 @@ object Dates {
     }
 
     fun parse(date: String): LocalDateTime {
-        return try {
-            readableFormat.parse(date)
-        } catch (e: IllegalArgumentException) {
-            Logs.error(tag, e.message, e)
-            currentTime
-        }
+        return LocalDateTime.parse(date, dateTimeFormat)
     }
 
-    fun LocalDateTime.toReadableDate(): String {
-        return "${this.date.dayOfMonth} ${formatMonthName(this.dayOfMonth)}, ${this.year}"
+    fun LocalDateTime.toReadableDate(monthName: String): String {
+        return "${this.date.dayOfMonth} $monthName, ${this.year}"
     }
 
     fun LocalDateTime.formatDate(): String {
         return "${this.date} ${this.time}"
     }
 }
+
+
