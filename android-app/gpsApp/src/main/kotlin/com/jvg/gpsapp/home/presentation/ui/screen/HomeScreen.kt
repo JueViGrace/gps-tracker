@@ -28,18 +28,15 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.Priority
 import com.jvg.gpsapp.home.presentation.state.HomeState
 import com.jvg.gpsapp.home.presentation.ui.components.CurrentLocationComponent
 import com.jvg.gpsapp.home.presentation.ui.components.TrackingList
 import com.jvg.gpsapp.home.presentation.viewmodel.HomeViewModel
 import com.jvg.gpsapp.resources.R
 import com.jvg.gpsapp.ui.Fonts
-import com.jvg.gpsapp.ui.components.LocationEffect
 import com.jvg.gpsapp.ui.components.standard.display.TextComponent
 import com.jvg.gpsapp.ui.components.standard.layout.bars.TopBarComponent
 import org.koin.androidx.compose.koinViewModel
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @RequiresPermission(
@@ -84,7 +81,7 @@ fun HomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AnimatedVisibility(visible = coarsePermission.status.isGranted && finePermission.status.isGranted) {
-                LaunchedEffect(true) {
+                /*LaunchedEffect(true) {
                     val usePreciseLocation = if (finePermission.status.isGranted) {
                         Priority.PRIORITY_HIGH_ACCURACY
                     } else {
@@ -102,7 +99,7 @@ fun HomeScreen() {
                     ) { location ->
                         viewmodel.updateLocation(location.lastLocation)
                     }
-                }
+                }*/
 
                 Column(
                     modifier = Modifier.fillMaxSize(),

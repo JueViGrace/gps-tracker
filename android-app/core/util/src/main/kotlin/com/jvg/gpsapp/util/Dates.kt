@@ -14,7 +14,6 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 object Dates {
-    private val tag = this::class.simpleName ?: "Dates"
     val currentTime: LocalDateTime =
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val normalFormat: DateTimeFormat<LocalDateTime> = LocalDateTime.Format {

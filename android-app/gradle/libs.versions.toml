@@ -1,7 +1,7 @@
 [versions]
 agp = "8.10.0"
-version-code = "100"
-version-name = "1.2.0"
+version-code = "1"
+version-name = "1.0.0"
 android-compileSdk = "36"
 android-minSdk = "26"
 android-targetSdk = "36"
@@ -12,19 +12,20 @@ androidx-lifecycle = "2.9.0"
 androidx-test-junit = "1.2.1"
 androidx-navigation-compose = "2.9.0"
 androidx-arch = "2.2.0"
-accompanistPermissions = "0.37.2"
+androidx-work = "2.10.1"
+accompanistPermissions = "0.37.3"
 google-location = "21.3.0"
 compose = "1.8.1"
 material3 = "1.3.2"
 junit = "4.13.2"
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.8.1"
 koin = "4.0.4"
 kotlinx-datetime = "0.6.2"
-sqldelight = "2.0.2"
+sqldelight = "2.1.0"
 ktor = "3.1.3"
-konnection = "1.4.3"
+konnection = "1.4.4"
 mockk = "1.14.0"
 turbine = "1.2.0"
 truth = "1.4.4"
@@ -75,6 +76,9 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 # [LOCATION]
 google-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "google-location" }
 
+# [WORK MANAGER]
+androidx-work-manager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }
+
 # [NAVIGATION]
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigation-compose" }
 
@@ -105,6 +109,7 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", vers
 # [DEPENDENCY INJECTION]
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
+koin-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
 koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
 koin-compose-viewmodel-navigation = { group = "io.insert-koin", name = "koin-compose-viewmodel-navigation", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }

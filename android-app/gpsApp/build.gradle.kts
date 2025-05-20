@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.google.location)
+    implementation(libs.androidx.work.manager)
 
     // Accompanist
     implementation(libs.accompanist.permissions)
@@ -139,6 +140,7 @@ dependencies {
     /* Koin */
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.workmanager)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)

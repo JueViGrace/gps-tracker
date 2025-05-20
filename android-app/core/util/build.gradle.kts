@@ -22,10 +22,6 @@ dependencies {
     // Resources
     implementation(projects.core.resources)
 
-    // Android
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
-
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
