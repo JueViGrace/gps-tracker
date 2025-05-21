@@ -55,9 +55,6 @@ fun HomeScreen() {
 
     LaunchedEffect(true) {
         coarsePermission.launchPermissionRequest()
-    }
-
-    LaunchedEffect(true) {
         finePermission.launchPermissionRequest()
     }
 

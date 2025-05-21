@@ -21,23 +21,17 @@ class LocationWorker(
     private val homeRepository: HomeRepository by inject()
 
     override suspend fun doWork(): Result {
-        var result = Result.retry()
-
-        sendTracking {
-            result = it
-            println(it)
-        }
-
-        return result
+        return sendTracking()
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun sendTracking(onResult: (Result) -> Unit) {
+    private suspend fun sendTracking(): Result {
+        var result = Result.retry()
         val location = if (locationService.permissionsGranted()) {
             locationService.getUserLocation()
         } else {
             null
-        } ?: return onResult(Result.retry())
+        } ?: return Result.retry()
 
         homeRepository.sendTracking(
             Tracking(
@@ -46,23 +40,27 @@ class LocationWorker(
                 altitude = location.altitude,
                 time = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             )
-        ).collect { result ->
-            when (result) {
+        ).collect { postResult ->
+            when (postResult) {
                 is RequestState.Success -> {
                     homeRepository.getLocations().collect { locationsResult ->
                         if (locationsResult is RequestState.Success) {
                             println("Locations updated")
+                            result = Result.success()
+                        }
+                        if (locationsResult is RequestState.Error) {
+                            println("Error updating locations")
+                            result = Result.retry()
                         }
                     }
-                    return@collect onResult(Result.success())
                 }
 
                 is RequestState.Error -> {
-                    return@collect onResult(Result.failure())
+                    result = Result.retry()
                 }
-
                 else -> {}
             }
         }
+        return result
     }
 }
